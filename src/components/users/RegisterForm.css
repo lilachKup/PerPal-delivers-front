@@ -1,0 +1,414 @@
+.register-form {
+  max-width: 580px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.submit-btn,
+confirm-account-btn {
+  width: 100%;
+  background-color: #3a0ca3;
+  color: white;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.submit-btn:hover,
+.confirm-account-btn:hover {
+  background-color: #240678;
+}
+
+.form-message {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  color: #d00000;
+}
+
+.password-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #3a0ca3;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  padding-right: 2.5rem !important;
+  height: 44px;
+  line-height: 1.5rem;
+}
+
+.phone-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.phone-prefix {
+  height: 44px;
+  padding: 0 12px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  font-size: 1rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.phone-input {
+  flex: 1;
+  height: 44px;
+  padding: 0 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  box-sizing: border-box;
+}
+
+.opening-hours-box {
+  border: 2px solid #a179dc;
+  border-radius: 12px;
+  padding: 10px 10px 16px 10px;
+  margin-bottom: 1.5rem;
+  background-color: #f8f5ff;
+  box-shadow: 0 2px 6px rgba(161, 121, 220, 0.15);
+  transition: border-color 0.2s;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.opening-hours-box:hover {
+  border-color: #7c4dff;
+}
+
+.opening-hours-box h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem;
+  color: #4a148c;
+  text-align: center;
+}
+
+.day-hours-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.day-hours-row label {
+  min-width: 70px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.form-select {
+  padding: 0.25rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.82rem;
+  min-width: 60px;
+  max-width: 80px;
+  flex-shrink: 0;
+}
+
+
+forgot-password-link,
+.resend-code-btn {
+  background-color: transparent;
+  color: #007bff;
+  border: none;
+  padding: 0;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-top: 10px;
+  text-decoration: underline;
+}
+
+.forgot-password-link:hover,
+.resend-code-btn:hover {
+  color: #0056b3;
+} 
+
+
+/* Login Button diffrenet color option */
+/*.login-btn {
+  width: 100%;
+  background-color: #e0dcf9;
+  color: #3a0ca3;
+  border: none;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.login-btn:hover {
+  background-color: #3a0ca3;
+  color: white;
+}*/
+
+.login-btn {
+  width: 100%;
+  background-color: white;
+  color: #3a0ca3;
+  border: 1px solid #3a0ca3;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.login-btn:hover {
+  background-color: #3a0ca3;
+  color: white;
+}
+
+
+
+
+
+
+
+
+/*.register-form {
+  max-width: 580px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.submit-btn {
+  width: 100%;
+  background-color: #3a0ca3;
+  color: white;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.submit-btn:hover {
+  background-color: #240678;
+}
+
+.form-message {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  color: #d00000;
+}
+
+.password-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #3a0ca3;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  padding-right: 2.5rem !important;
+  height: 44px;
+  line-height: 1.5rem;
+}
+
+.phone-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.phone-prefix {
+  height: 44px;
+  padding: 0 12px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  font-size: 1rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.phone-input {
+  flex: 1;
+  height: 44px;
+  padding: 0 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  box-sizing: border-box;
+}
+
+.opening-hours-box {
+  border: 2px solid #a179dc;
+  border-radius: 12px;
+  padding: 10px 10px 16px 10px;
+  margin-bottom: 1.5rem;
+  background-color: #f8f5ff;
+  box-shadow: 0 2px 6px rgba(161, 121, 220, 0.15);
+  transition: border-color 0.2s;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.opening-hours-box:hover {
+  border-color: #7c4dff;
+}
+
+.opening-hours-box h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem;
+  color: #4a148c;
+  text-align: center;
+}
+
+.day-hours-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.day-hours-row label {
+  min-width: 70px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.form-select {
+  padding: 0.25rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.82rem;
+  min-width: 60px;
+  max-width: 80px;
+  flex-shrink: 0;
+}
+
+.resend-code-btn {
+  background-color: transparent;
+  color: #007bff;
+  border: none;
+  padding: 0;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-top: 10px;
+  text-decoration: underline;
+}
+
+.resend-code-btn:hover {
+  color: #0056b3;
+}
+
+
+.login-btn {
+  width: 100%;
+  background-color: white;
+  color: #3a0ca3;
+  border: 1px solid #3a0ca3;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.login-btn:hover {
+  background-color: #3a0ca3;
+  color: white;
+}*/
+
+

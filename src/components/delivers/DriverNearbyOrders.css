@@ -1,0 +1,150 @@
+.driver-header {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.driver-name-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2b6777;
+}
+
+.info-staff {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #ffffff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.daily-earnings {
+    color: #28a745;
+}
+
+.current-time {
+    color: #007bff;
+}
+
+.orders-container{
+    background-color: #ffffff;
+    color: #333;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e0d8f8;
+    box-shadow: 0 4px 12px rgba(58, 12, 163, 0.1);
+    transition: transform 0.2s ease;
+}
+
+
+.orders-container {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #e0d8f8;
+    box-shadow: 0 6px 20px rgba(58, 12, 163, 0.1);
+    transition: transform 0.2s ease;
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+.orders-box {
+    display: flex;
+    flex-direction: column; /* אחת אחרי השנייה */
+    gap: 16px;
+    max-height: 400px; /* גובה מקסימלי לפני גלילה */
+    overflow-y: auto; /* גלילה אנכית */
+    padding-right: 8px; /* קצת רווח בצד הגלילה */
+}
+
+/* עיצוב פס הגלילה (לא חובה) */
+.orders-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.orders-box::-webkit-scrollbar-thumb {
+    background-color: #6a5acd;
+    border-radius: 4px;
+}
+
+.orders-box::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+
+/* כרטיס הזמנה */
+.order-card {
+    background: #f9f9ff;
+    border: 1px solid #e3defc;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.order-card:hover {
+    transform: translateY(-4px);
+    border-color: #6a5acd;
+    box-shadow: 0 8px 20px rgba(106, 90, 205, 0.2);
+}
+
+/* הדגשה להזמנה הקרובה ביותר */
+.order-card.closest {
+    border: 2px solid #28a745;
+    background: #e8f8ee;
+}
+
+/* כפתור קבלת הזמנה */
+.accept-order-button {
+    display: inline-block;
+    background-color: #6a5acd;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.accept-order-button:hover {
+    background-color: #5848c2;
+}
+
+/* מצב עם משלוח פעיל */
+.in-delivery {
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #ddd;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.in-delivery h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #2b6777;
+}
+
+.in-delivery p {
+    margin: 6px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.no-delivery {
+    text-align: center;
+}

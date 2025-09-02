@@ -1,0 +1,34 @@
+.auth-tabs-container {
+    background-color: #fcf9ff;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 440px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .tab-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .tab-button {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 2px solid transparent;
+    color: #4a148c;
+    transition: 0.3s;
+  }
+  
+  .tab-button.active {
+    border-bottom: 2px solid #4a148c;
+  }
+  
+  .tab-content {
+    margin-top: 10px;
+  }
+  
