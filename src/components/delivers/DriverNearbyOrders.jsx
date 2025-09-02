@@ -43,10 +43,42 @@ const DriverOrder = ({driver_first_name, driver_last_name}) => {
     const latTelAvivAza25 = 32.0469230;
     const lonTelAvivAza25 = 34.7594460;
 
-    function getNewOrder(order) {
-        setOrderToDeliver(order);
-        setInDelivery(true);
-        setOrders((prev) => prev.filter((o) => o.id !== order.id));
+    const getNewOrder = async (order) => {
+        //todo update order status in DB to "in delivery"
+        try {
+            const responseOfUpdateOrderStatus = await fetch(
+                "https://yv6baxe2i0.execute-api.us-east-1.amazonaws.com/dev/updateOrderFromStore",
+                {
+                    method: "POST", // 👈 POST, לא PUT
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        order_num: order.id,        // או order.order_num אם זה השדה האמיתי
+                        store_id: order.storeId,    // או order.store_id
+                        order_status: "in delivery" // 👈 חייב להתאים ל-Lambda
+                    })
+                }
+            );
+
+            if (!responseOfUpdateOrderStatus.ok) {
+                const errBody = await responseOfUpdateOrderStatus.text();
+                throw new Error(`HTTP ${responseOfUpdateOrderStatus.status}: ${errBody}`);
+            }
+
+            const data = await responseOfUpdateOrderStatus.json();
+            console.log("✅ update ok:", data);
+            setOrderToDeliver(order);
+            setInDelivery(true);
+            setOrders((prev) => prev.filter((o) => o.id !== order.id));
+        } catch (err) {
+            console.error("❌ updateOrderFromStore error:", err);
+        }
+
+
+
+
+
+
+
     }
 
     useEffect(() => {
@@ -82,7 +114,7 @@ const DriverOrder = ({driver_first_name, driver_last_name}) => {
 
                 const formatted = data.orders.map((order) => {
                     const totalPriceNum = Number(order?.total_price);
-                    const storeCoordsStr = order?.coordinates_store ?? null; // מגיע מה-API שלך
+                    const storeCoordsStr = order?.store_coordinates ?? null; // מגיע מה-API שלך
                     const storeDest = parseLatLngStr(storeCoordsStr);        // {lat,lng} או null
 
                     return {
