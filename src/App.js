@@ -10,6 +10,7 @@ import { useAuth } from 'react-oidc-context';
 export default function App() {
   const auth = useAuth();
   const location = useLocation();
+  const x = 5;
 
 
 
