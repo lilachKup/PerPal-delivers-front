@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./DriverNearbyOrders.css";
+import TopBar from "./TopBar";
 
 // עזרי פורמט בטוחים
 const safeFixed = (val, digits = 1) => {
@@ -44,7 +45,6 @@ const DriverOrder = ({driver_first_name, driver_last_name}) => {
     const lonTelAvivAza25 = 34.7594460;
 
     const getNewOrder = async (order) => {
-        //todo update order status in DB to "in delivery"
         try {
             const responseOfUpdateOrderStatus = await fetch(
                 "https://yv6baxe2i0.execute-api.us-east-1.amazonaws.com/dev/updateOrderFromStore",
@@ -72,11 +72,6 @@ const DriverOrder = ({driver_first_name, driver_last_name}) => {
         } catch (err) {
             console.error("❌ updateOrderFromStore error:", err);
         }
-
-
-
-
-
 
 
     }
@@ -161,8 +156,9 @@ const DriverOrder = ({driver_first_name, driver_last_name}) => {
     }, [orderToDeliver]);
 
     return (
+        <>
+        <TopBar />
         <div>
-            {console.log("Rendering DriverOrder with props:", { driver_first_name, driver_last_name })}
             <header className="driver-header">
                 <h2 className="driver-name-title">Welcome back {deliverName} 👋</h2>
 
@@ -280,6 +276,7 @@ const DriverOrder = ({driver_first_name, driver_last_name}) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

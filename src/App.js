@@ -11,6 +11,8 @@ export default function App() {
   const auth = useAuth();
   const location = useLocation();
 
+
+
   const cached = (() => {
     try {
       return JSON.parse(localStorage.getItem('pp_user') || 'null');
