@@ -28,22 +28,20 @@
 
 .topbar .logo {
   margin: 0;
-  display: inline-flex;      /* מאפשר יישור אנכי עם התמונה */
-  align-items: center;       /* מיושר אנכית */
-  gap: 8px;                  /* רווח בין הטקסט ללוגו */
+  display: inline-flex;      
+  align-items: center;      
+  gap: 8px;                  
   font-weight: 800;
 }
 
-/* תמונת הלוגו */
 .topbar .logo-image {
-  height: 50px;              /* קטן מגובה הטופ־בר (60px) כדי להיראות מדויק */
-  width: auto;               /* שומר פרופורציות */
+  height: 50px;            
+  width: auto;              
   vertical-align: middle;
-  -webkit-user-drag: none;   /* לא לגרור בטעות */
+  -webkit-user-drag: none;  
   user-select: none;
 }
 
-/* אופציונלי: במסכים קטנים להקטין מעט */
 @media (max-width: 420px) {
   .topbar .logo-image { height: 24px; }
 }

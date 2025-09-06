@@ -57,6 +57,7 @@ export default function App() {
               driver_first_name={profile.given_name ?? cached?.given_name ?? ''}
               driver_last_name={profile.family_name ?? cached?.family_name ?? ''}
               driver_id={profile.sub ?? cached?.sub ?? ''}
+              driver_email={profile.email ?? cached?.email ?? ''}
             />
           ) : (
             <Navigate to="/?tab=login" replace />
