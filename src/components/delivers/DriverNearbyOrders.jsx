@@ -40,7 +40,7 @@ const buildGmapsUrl = ({ originLat, originLon, destLat, destLng }) => {
     return `${base}${origin}${dest}`;
 };
 
-const DriverOrder = ({ driver_first_name, driver_last_name, driver_id }) => {
+const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_email }) => {
     const [coordinates, setCoordinates] = useState({ lon: 0, lat: 0 });
     const [orders, setOrders] = useState([]);
     const [dailyEarnings, setDailyEarnings] = useState(0);
@@ -219,6 +219,8 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id }) => {
                     store_id: orderToDeliver.storeId,
                     order_num: orderToDeliver.id,
                     driver_id: driver_id,
+                    driver_email: driver_email,
+                    price: orderToDeliver.totalPrice,
                 }),
             });
 
@@ -304,7 +306,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id }) => {
         };
     }, [inDelivery]);
 
-    // חישוב רווח
     useEffect(() => {
         const inDeliveryEarn = orderToDeliver
             ? Number(orderToDeliver.totalPrice) * 0.08
@@ -312,7 +313,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id }) => {
         setDailyEarnings(Number.isFinite(inDeliveryEarn) ? inDeliveryEarn : 0);
     }, [orderToDeliver]);
 
-    // ---------- UI ----------
 
     return (
         <>
@@ -322,9 +322,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id }) => {
                     <h2 className="driver-name-title">Welcome back {deliverName} 👋</h2>
 
                     <div className="info-staff">
-                        <div className="daily-earnings">
-                            💰 Daily Earnings: ${fmtCurrency(dailyEarnings)}
-                        </div>
+
                         <div className="current-time">
                             ⏰{" "}
                             {time.toLocaleTimeString([], {
@@ -365,11 +363,11 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id }) => {
                                             {orderToDeliver.customerLocation}
                                         </p>
                                         <p>
-                                            <strong>Total Price:</strong> $
+                                            <strong>Total Price:</strong> ₪
                                             {fmtCurrency(orderToDeliver.totalPrice)}
                                         </p>
                                         <p>
-                                            <strong>Earn (8%):</strong> $
+                                            <strong>Earn (8%):</strong> ₪
                                             {fmtCurrency(Number(orderToDeliver.totalPrice) * 0.08)}
                                         </p>
 
@@ -430,7 +428,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id }) => {
                                                     <strong>Location:</strong> {order.customerLocation}
                                                 </p>
                                                 <p>
-                                                    <strong>Total Price:</strong> $
+                                                    <strong>Total Price:</strong> ₪
                                                     {fmtCurrency(order.totalPrice)}
                                                 </p>
                                                 <p>
