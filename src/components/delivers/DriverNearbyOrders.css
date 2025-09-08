@@ -58,14 +58,13 @@
 
 .orders-box {
     display: flex;
-    flex-direction: column; /* אחת אחרי השנייה */
+    flex-direction: column; 
     gap: 16px;
-    max-height: 400px; /* גובה מקסימלי לפני גלילה */
-    overflow-y: auto; /* גלילה אנכית */
-    padding-right: 8px; /* קצת רווח בצד הגלילה */
+    max-height: 400px; 
+    overflow-y: auto; 
+    padding-right: 8px; 
 }
 
-/* עיצוב פס הגלילה (לא חובה) */
 .orders-box::-webkit-scrollbar {
     width: 8px;
 }
@@ -80,7 +79,6 @@
 }
 
 
-/* כרטיס הזמנה */
 .order-card {
     background: #f9f9ff;
     border: 1px solid #e3defc;
@@ -97,13 +95,11 @@
     box-shadow: 0 8px 20px rgba(106, 90, 205, 0.2);
 }
 
-/* הדגשה להזמנה הקרובה ביותר */
 .order-card.closest {
     border: 2px solid #28a745;
     background: #e8f8ee;
 }
 
-/* כפתור קבלת הזמנה */
 .accept-order-button {
     display: inline-block;
     background-color: #6a5acd;
@@ -121,7 +117,6 @@
     background-color: #5848c2;
 }
 
-/* מצב עם משלוח פעיל */
 .in-delivery {
     background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
     padding: 24px;

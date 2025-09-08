@@ -24,7 +24,6 @@ export default function RegisterForm() {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const sanitizeText = (text) => {
-    // מסיר תווים שאינם אותיות, רווחים, מקפים או גרש (אם תרצי להסיר גם רווחים – תגידי לי)
     return text.replace(/[^A-Za-zא-ת\s'-]/g, '').trim();
   };
 
@@ -37,7 +36,6 @@ export default function RegisterForm() {
       return;
     }
 
-    // ניקוי שמות
     const cleanFirstName = sanitizeText(firstName);
     const cleanLastName = sanitizeText(lastName);
 

@@ -55,7 +55,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
 
     const deliverName = `${driver_first_name} ${driver_last_name}`;
 
-    // נקודת ייחוס זמנית (לטסטים)
     const latTelAvivAza25 = 32.046923;
     const lonTelAvivAza25 = 34.759446;
 
@@ -97,7 +96,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                     storeDest: parseLatLngStr(first.store_coordinates ?? null),
                 };
 
-            // אם חסר coords—נביא לפי storeId
             if (mapped && !mapped.storeCoordinatesStr && mapped.storeId !== "—") {
                 try {
                     const coordsRes = await fetch(
@@ -207,7 +205,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
         }
     };
 
-    // סיום משלוח: מחיקה מה-Orders לפי store_id, order_num, driver_id
     const finishCurrentDelivery = async () => {
         if (!orderToDeliver) return;
         setFinishing(true);
@@ -231,10 +228,9 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
             const data = await res.json();
             console.log("✅ finishDelivery ok:", data);
 
-            // שחרור המשלוח וחזרה לרשימת ההזמנות
             setOrderToDeliver(null);
             setInDelivery(false);
-            await fetchNearbyOrders(); // רענון מיידי
+            await fetchNearbyOrders(); 
         } catch (err) {
             console.error("❌ finishDelivery error:", err);
             alert("Failed to finish delivery. Please try again.");
@@ -245,7 +241,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
 
     // ---------- Effects ----------
 
-    // בדיקת משלוח פעיל בזמן mount/שינוי driver_id
     useEffect(() => {
         let cancelled = false;
         (async () => {
@@ -268,7 +263,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
         };
     }, [driver_id]);
 
-    // שעון + מיקום כל דקה
     useEffect(() => {
         timeTickRef.current = setInterval(() => setTime(new Date()), 1000);
         updateDriverLocationOnce();
@@ -280,7 +274,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
         };
     }, []);
 
-    // פולינג של הזמנות: רק כשאין משלוח פעיל
     useEffect(() => {
         if (inDelivery) {
             if (ordersPollRef.current) {
@@ -305,7 +298,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
         };
     }, [inDelivery]);
 
-    // חישוב רווח
     useEffect(() => {
         const inDeliveryEarn = orderToDeliver
             ? Number(orderToDeliver.totalPrice) * 0.08

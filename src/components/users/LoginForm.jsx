@@ -40,7 +40,6 @@ export default function LoginForm() {
         };
         localStorage.setItem('pp_user', JSON.stringify(base));
 
-        // שליפת כל השדות מהמשתמש (כולל given_name, family_name, address)
         user.getUserAttributes((err, attrs) => {
           if (!err && Array.isArray(attrs)) {
             const obj = {};

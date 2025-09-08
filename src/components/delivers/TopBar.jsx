@@ -1,4 +1,3 @@
-// src/components/TopBar.jsx
 import React from "react";
 import { CognitoUserPool } from "amazon-cognito-identity-js";
 import "./TopBar.css";
@@ -14,14 +13,12 @@ const userPool = new CognitoUserPool(poolData);
 
 const TopBar = () => {
   const handleLogout = () => {
-    // 1. מחיקת מידע מה־localStorage
     localStorage.removeItem("pp_user");
     sessionStorage.clear();
 
-    // 2. יצירת משתמש נוכחי (אם יש) ו־signOut
     const user = userPool.getCurrentUser();
     if (user) {
-      user.signOut(); // מנתק מהסשן המקומי
+      user.signOut(); 
     }
 
     window.location.href = "/login";

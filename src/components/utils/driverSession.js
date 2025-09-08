@@ -1,7 +1,5 @@
 // ===== Driver Session Utils =====
 
-// שמירת סשן שליח אחרי לוגין
-
 export function setDriverSession({ firstName, lastName }) {
     localStorage.setItem("pp_driver", JSON.stringify({ firstName, lastName }));
 }
@@ -12,17 +10,17 @@ export function getDriverSession() {
         return JSON.parse(raw);
     } catch { return null; }
 }
-// חובה להתחבר – אחרת רידיירקט ללוגין
+
+
 export function requireDriverSessionOrRedirect() {
     const d = getDriverSession();
     if (!d) {
-        window.location.href = "/login-driver"; // שנה לנתיב שלך אם שונה
+        window.location.href = "/login-driver"; 
         return null;
     }
     return d;
 }
 
-// ניקוי סשן (ל־Logout)
 export function clearDriverSession() {
     localStorage.removeItem("pp_driver");
     sessionStorage.clear();
