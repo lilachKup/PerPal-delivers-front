@@ -217,6 +217,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                     order_num: orderToDeliver.id,
                     driver_id: driver_id,
                     driver_email: driver_email,
+                    price: orderToDeliver.totalPrice,
                 }),
             });
 
@@ -305,7 +306,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
         setDailyEarnings(Number.isFinite(inDeliveryEarn) ? inDeliveryEarn : 0);
     }, [orderToDeliver]);
 
-    // ---------- UI ----------
+
 
     return (
         <>
@@ -315,9 +316,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                     <h2 className="driver-name-title">Welcome back {deliverName} 👋</h2>
 
                     <div className="info-staff">
-                        <div className="daily-earnings">
-                            💰 Daily Earnings: ₪{fmtCurrency(dailyEarnings)}
-                        </div>
+
                         <div className="current-time">
                             ⏰{" "}
                             {time.toLocaleTimeString([], {
