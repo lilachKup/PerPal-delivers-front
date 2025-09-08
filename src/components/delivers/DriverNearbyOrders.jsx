@@ -11,6 +11,10 @@ const NEARBY_ORDERS_BASE =
 const FINISH_DELIVERY_URL =
     "https://h3caad343d.execute-api.us-east-1.amazonaws.com/dev/finishDelivery";
 
+// ---- utils ----
+const DISTANCE_KM = 15; // תואם למה שמוצג ב-UI
+const FALLBACK_COORDS = { lat: 32.0469, lon: 34.759 }; // נקודת פולבק עדינה (אזה 25 ת"א)
+
 const safeFixed = (val, digits = 1) => {
     const n = Number(val);
     return Number.isFinite(n) ? n.toFixed(digits) : "—";
@@ -19,14 +23,11 @@ const fmtCurrency = (val) => {
     const n = Number(val);
     return Number.isFinite(n) ? n.toFixed(2) : "—";
 };
-
 const parseLatLngStr = (s) => {
     if (!s || typeof s !== "string") return null;
     const [lat, lng] = s.split(",").map(Number);
-    if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
-    return null;
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
 };
-
 const buildGmapsUrl = ({ originLat, originLon, destLat, destLng }) => {
     const base = "https://www.google.com/maps/dir/?api=1&travelmode=driving";
     const origin =
@@ -52,6 +53,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
     const ordersPollRef = useRef(null);
     const locationPollRef = useRef(null);
     const timeTickRef = useRef(null);
+    const isFetchingRef = useRef(false); // מונע בקשות חופפות
 
     const deliverName = `${driver_first_name} ${driver_last_name}`;
 
@@ -72,11 +74,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
             }
             const data = await res.json();
 
-            const ordersArr = Array.isArray(data?.orders)
-                ? data.orders
-                : data?.order
-                    ? [data.order]
-                    : [];
+            const ordersArr = Array.isArray(data?.orders) ? data.orders : data?.order ? [data.order] : [];
             const active = ordersArr.length > 0;
             const first = active ? ordersArr[0] : null;
 
@@ -85,7 +83,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                     storeId: first.store_id ?? "—",
                     id: first.order_num ?? "—",
                     customerName: first.customer_name ?? "—",
-                    customerLocation: first.customer_Location ?? first.customer_Location ?? "—",
+                    customerLocation: first.customer_location ?? first.customer_Location ?? "—",
                     customerMail: first.customer_mail ?? "—",
                     totalPrice: Number(first.total_price) || NaN,
                     earn: (Number(first.total_price) || 0) * 0.08,
@@ -93,6 +91,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                     storeDest: parseLatLngStr(first.store_coordinates ?? null),
                 };
 
+            // פטצ' לקואורדינטות חסרות של החנות
             if (mapped && !mapped.storeCoordinatesStr && mapped.storeId !== "—") {
                 try {
                     const coordsRes = await fetch(
@@ -119,12 +118,26 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
     };
 
     const fetchNearbyOrders = async () => {
+        const { lat, lon } = coordinates;
+        // אל תמשוך אם אין מיקום אמיתי
+        if (
+            !Number.isFinite(lat) ||
+            !Number.isFinite(lon) ||
+            (lat === 0 && lon === 0)
+        ) {
+            console.warn("⏭️ skipping fetchNearbyOrders – coords not ready:", coordinates);
+            return;
+        }
+
+        if (isFetchingRef.current) return; // מגן על בקשות חופפות בזמן פולינג
+        isFetchingRef.current = true;
         try {
-            console.log("Fetching nearby orders for coordinates: lat,", coordinates.lat, "lon:", coordinates.lon);
-            const response = await fetch(
-                `${NEARBY_ORDERS_BASE}/${coordinates.lat}/${coordinates.lon}`,
-                { method: "GET", headers: { "Content-Type": "application/json" } }
-            );
+            const url = `${NEARBY_ORDERS_BASE}/${lat}/${lon}?distanceKm=${DISTANCE_KM}`;
+            console.log(`📡 fetching nearby: ${url}`);
+            const response = await fetch(url, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            });
             const data = await response.json();
 
             if (!data?.orders?.length) {
@@ -140,8 +153,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                     storeId: order?.store_id ?? "—",
                     id: order?.order_num ?? "—",
                     customerName: order?.customer_name ?? "—",
-                    customerLocation:
-                        order?.customer_location ?? order?.customer_Location ?? "—",
+                    customerLocation: order?.customer_location ?? order?.customer_Location ?? "—",
                     customerMail: order?.customer_mail ?? "—",
                     totalPrice: Number.isFinite(totalPriceNum) ? totalPriceNum : NaN,
                     earn: Number.isFinite(totalPriceNum) ? totalPriceNum * 0.08 : NaN,
@@ -153,12 +165,18 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
             setOrders(formatted);
         } catch (error) {
             console.error("Error fetching orders:", error);
+        } finally {
+            isFetchingRef.current = false;
         }
     };
 
     const updateDriverLocationOnce = () => {
         if (!navigator.geolocation) {
             console.error("Geolocation is not supported by this browser.");
+            // פולבאק רך – מאפשר פיתוח/דמו גם בלי הרשאות
+            if (coordinates.lat === 0 && coordinates.lon === 0) {
+                setCoordinates(FALLBACK_COORDS);
+            }
             return;
         }
         navigator.geolocation.getCurrentPosition(
@@ -168,7 +186,14 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                     setCoordinates({ lon: longitude, lat: latitude });
                 }
             },
-            (error) => console.error("Error getting location:", error)
+            (error) => {
+                console.error("Error getting location:", error);
+                // פולבאק רך אם אין עדיין מיקום
+                if (coordinates.lat === 0 && coordinates.lon === 0) {
+                    setCoordinates(FALLBACK_COORDS);
+                }
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
         );
     };
 
@@ -187,9 +212,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
 
             if (!responseOfUpdateOrderStatus.ok) {
                 const errBody = await responseOfUpdateOrderStatus.text();
-                throw new Error(
-                    `HTTP ${responseOfUpdateOrderStatus.status}: ${errBody}`
-                );
+                throw new Error(`HTTP ${responseOfUpdateOrderStatus.status}: ${errBody}`);
             }
 
             const data = await responseOfUpdateOrderStatus.json();
@@ -229,7 +252,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
 
             setOrderToDeliver(null);
             setInDelivery(false);
-            await fetchNearbyOrders(); 
+            await fetchNearbyOrders(); // רענון מיידי
         } catch (err) {
             console.error("❌ finishDelivery error:", err);
             alert("Failed to finish delivery. Please try again.");
@@ -240,6 +263,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
 
     // ---------- Effects ----------
 
+    // mount: בדיקת משלוח פעיל
     useEffect(() => {
         let cancelled = false;
         (async () => {
@@ -262,18 +286,20 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
         };
     }, [driver_id]);
 
+    // שעון + מיקום כל דקה
     useEffect(() => {
         timeTickRef.current = setInterval(() => setTime(new Date()), 1000);
-        updateDriverLocationOnce();
+        updateDriverLocationOnce(); // ניסיון ראשוני
         locationPollRef.current = setInterval(updateDriverLocationOnce, 60000);
-
         return () => {
             if (timeTickRef.current) clearInterval(timeTickRef.current);
             if (locationPollRef.current) clearInterval(locationPollRef.current);
         };
     }, []);
 
+    // פולינג הזמנות: מתחילים רק אחרי שיש מיקום תקף, ונעצר כשנכנסים למשלוח פעיל
     useEffect(() => {
+        // עצור פולינג אם יש משלוח פעיל
         if (inDelivery) {
             if (ordersPollRef.current) {
                 clearInterval(ordersPollRef.current);
@@ -283,10 +309,16 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
             return;
         }
 
-        (async () => {
-            await fetchNearbyOrders();
-        })();
+        // חכה למיקום אמיתי
+        const { lat, lon } = coordinates;
+        const coordsReady =
+            Number.isFinite(lat) && Number.isFinite(lon) && !(lat === 0 && lon === 0);
 
+        if (!coordsReady) return;
+
+        // משיכה מיידית + פולינג כל דקה
+        fetchNearbyOrders();
+        if (ordersPollRef.current) clearInterval(ordersPollRef.current);
         ordersPollRef.current = setInterval(fetchNearbyOrders, 60000);
 
         return () => {
@@ -295,16 +327,13 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                 ordersPollRef.current = null;
             }
         };
-    }, [inDelivery]);
+    }, [inDelivery, coordinates.lat, coordinates.lon]); // טריגר גם על שינוי מיקום
 
+    // עדכון רווח יומי לפי המשלוח הפעיל
     useEffect(() => {
-        const inDeliveryEarn = orderToDeliver
-            ? Number(orderToDeliver.totalPrice) * 0.08
-            : 0;
+        const inDeliveryEarn = orderToDeliver ? Number(orderToDeliver.totalPrice) * 0.08 : 0;
         setDailyEarnings(Number.isFinite(inDeliveryEarn) ? inDeliveryEarn : 0);
     }, [orderToDeliver]);
-
-
 
     return (
         <>
@@ -312,9 +341,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
             <div>
                 <header className="driver-header">
                     <h2 className="driver-name-title">Welcome back {deliverName} 👋</h2>
-
                     <div className="info-staff">
-
                         <div className="current-time">
                             ⏰{" "}
                             {time.toLocaleTimeString([], {
@@ -323,10 +350,9 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                                 second: "2-digit",
                             })}
                         </div>
-                        <span className="max-km">Max Distance to delivery: 15km </span>
+                        <span className="max-km">Max Distance to delivery: {DISTANCE_KM}km </span>
                         <span className="driver-location">
-              Your location: {safeFixed(coordinates?.lat, 4)},{" "}
-                            {safeFixed(coordinates?.lon, 4)}
+              Your location: {safeFixed(coordinates?.lat, 4)}, {safeFixed(coordinates?.lon, 4)}
             </span>
                     </div>
                 </header>
@@ -338,34 +364,15 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                                 <h3>In Delivery</h3>
                                 {orderToDeliver ? (
                                     <>
+                                        <p><strong>Order ID:</strong> {orderToDeliver.id}</p>
+                                        <p><strong>Store ID:</strong> {orderToDeliver.storeId}</p>
+                                        <p><strong>Client:</strong> {orderToDeliver.customerName}</p>
+                                        <p><strong>Email:</strong> {orderToDeliver.customerMail}</p>
+                                        <p><strong>Location:</strong> {orderToDeliver.customerLocation}</p>
+                                        <p><strong>Total Price:</strong> ₪{fmtCurrency(orderToDeliver.totalPrice)}</p>
+                                        <p><strong>Earn (8%):</strong> ₪{fmtCurrency(Number(orderToDeliver.totalPrice) * 0.08)}</p>
                                         <p>
-                                            <strong>Order ID:</strong> {orderToDeliver.id}
-                                        </p>
-                                        <p>
-                                            <strong>Store ID:</strong> {orderToDeliver.storeId}
-                                        </p>
-                                        <p>
-                                            <strong>Client:</strong> {orderToDeliver.customerName}
-                                        </p>
-                                        <p>
-                                            <strong>Email:</strong> {orderToDeliver.customerMail}
-                                        </p>
-                                        <p>
-                                            <strong>Location:</strong>{" "}
-                                            {orderToDeliver.customerLocation}
-                                        </p>
-                                        <p>
-                                            <strong>Total Price:</strong> ₪
-                                            {fmtCurrency(orderToDeliver.totalPrice)}
-                                        </p>
-                                        <p>
-                                            <strong>Earn (8%):</strong> ₪
-                                            {fmtCurrency(Number(orderToDeliver.totalPrice) * 0.08)}
-                                        </p>
-
-                                        <p>
-                                            <strong>Store Coords:</strong>{" "}
-                                            {orderToDeliver.storeCoordinatesStr ?? "—"}{" "}
+                                            <strong>Store Coords:</strong> {orderToDeliver.storeCoordinatesStr ?? "—"}{" "}
                                             {orderToDeliver.storeDest && (
                                                 <a
                                                     href={buildGmapsUrl({
@@ -382,8 +389,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                                                 </a>
                                             )}
                                         </p>
-
-                                        {/* Finish Delivery */}
                                         <button
                                             className="finish-delivery-button"
                                             onClick={finishCurrentDelivery}
@@ -403,34 +408,18 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                                     {orders && orders.length > 0 ? (
                                         orders.map((order) => (
                                             <div
-                                                key={order.id || `${order.storeId}-${Math.random()}`}
+                                                key={`${order.storeId}:${order.id}`}
                                                 className="order-card"
                                             >
                                                 <h4>Order #{order.id}</h4>
+                                                <p><strong>Store ID:</strong> {order.storeId}</p>
+                                                <p><strong>Client:</strong> {order.customerName}</p>
+                                                <p><strong>Email:</strong> {order.customerMail}</p>
+                                                <p><strong>Location:</strong> {order.customerLocation}</p>
+                                                <p><strong>Total Price:</strong> ₪{fmtCurrency(order.totalPrice)}</p>
+                                                <p><strong>Earn (8%):</strong> {safeFixed(order.earn, 1)}</p>
                                                 <p>
-                                                    <strong>Store ID:</strong> {order.storeId}
-                                                </p>
-                                                <p>
-                                                    <strong>Client:</strong> {order.customerName}
-                                                </p>
-                                                <p>
-                                                    <strong>Email:</strong> {order.customerMail}
-                                                </p>
-                                                <p>
-                                                    <strong>Location:</strong> {order.customerLocation}
-                                                </p>
-                                                <p>
-                                                    <strong>Total Price:</strong> ₪
-                                                    {fmtCurrency(order.totalPrice)}
-                                                </p>
-                                                <p>
-                                                    <strong>Earn (8%):</strong>{" "}
-                                                    {safeFixed(order.earn, 1)}
-                                                </p>
-
-                                                <p>
-                                                    <strong>Store Coords:</strong>{" "}
-                                                    {order.storeCoordinatesStr ?? "—"}{" "}
+                                                    <strong>Store Coords:</strong> {order.storeCoordinatesStr ?? "—"}{" "}
                                                     {order.storeDest && (
                                                         <a
                                                             href={buildGmapsUrl({
@@ -447,7 +436,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
                                                         </a>
                                                     )}
                                                 </p>
-
                                                 <button
                                                     className="accept-order-button"
                                                     onClick={() => getNewOrder(order)}
