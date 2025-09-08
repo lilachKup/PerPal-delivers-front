@@ -121,7 +121,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
     const fetchNearbyOrders = async () => {
         try {
             const response = await fetch(
-                `${NEARBY_ORDERS_BASE}/${coordinates.lat}/${coordinates.lon}`,
+                `${NEARBY_ORDERS_BASE}/${32.0469}/${34.7596}`,
                 { method: "GET", headers: { "Content-Type": "application/json" } }
             );
             const data = await response.json();
