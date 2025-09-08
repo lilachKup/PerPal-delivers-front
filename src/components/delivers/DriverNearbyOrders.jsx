@@ -55,9 +55,6 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
 
     const deliverName = `${driver_first_name} ${driver_last_name}`;
 
-    const latTelAvivAza25 = 32.046923;
-    const lonTelAvivAza25 = 34.759446;
-
     // ---------- APIs ----------
 
     const checkInDelivery = async (driverId) => {
@@ -124,7 +121,7 @@ const DriverOrder = ({ driver_first_name, driver_last_name, driver_id, driver_em
     const fetchNearbyOrders = async () => {
         try {
             const response = await fetch(
-                `${NEARBY_ORDERS_BASE}/${latTelAvivAza25}/${lonTelAvivAza25}`,
+                `${NEARBY_ORDERS_BASE}/${coordinates.lat}/${coordinates.lon}`,
                 { method: "GET", headers: { "Content-Type": "application/json" } }
             );
             const data = await response.json();
