@@ -31,7 +31,7 @@ const TopBar = () => {
         <img src={prepal_logo} alt="PrePal Logo" className="logo-image" />
       </div>      <div className="actions">
         <button onClick={handleLogout}>Logout</button>
-        <button onClick={() => alert("Profile pressed")}>Profile</button>
+        
       </div>
     </div>
   );
